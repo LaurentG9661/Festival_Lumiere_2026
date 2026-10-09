@@ -8,8 +8,9 @@
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f8f9fa; color: #333; margin: 0; padding: 20px; }
     .container { max-width: 800px; margin: 0 auto; }
     h1 { color: #e50914; text-align: center; }
-    .filters { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+    .filters { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; align-items: center; }
     input, select { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; width: 100%; box-sizing: border-box; }
+    .checkbox-filter { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: bold; cursor: pointer; user-select: none; }
     .seance-card { background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; border-left: 5px solid #e50914; }
     .seance-info h3 { margin: 0 0 5px 0; font-size: 16px; }
     .seance-info p { margin: 0; font-size: 14px; color: #666; }
@@ -30,6 +31,10 @@
     <select id="filter-lieu" onchange="filtrer()">
       <option value="">📍 Tous les lieux</option>
     </select>
+    <label class="checkbox-filter">
+      <input type="checkbox" id="filter-selection" onchange="filtrer()" style="width: auto;">
+      ⭐ Masquer non-sélectionnés
+    </label>
   </div>
 
   <!-- LISTE DES SÉANCES -->
@@ -45,58 +50,84 @@
 </div>
 
 <script>
-  // 🔗 REMPLACEZ CETTE URL PAR VOTRE LIEN LIEN CSV GOOGLE SHEET PUBLIÉ
   const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVdaa2KecQUjQiiFpHUJs-zylt95WNg7MfLuYzt9PMp2Z8xmeXe0d8aiGD9QAV7CSHwTwVzJxz5z0y/pub?gid=0&single=true&output=csv';
 
   let seances = [];
   let selection = new Set();
 
-  // 1. Charger et parser le CSV
+  // Découpage propre du CSV en tenant compte des guillemets
+  function parseCSVLine(text) {
+    const regex = /(?:,|\n|^)("(?:(?:"")*|[^"]*)*"|[^,\n]*)/g;
+    const matches = [];
+    let match;
+    while ((match = regex.exec(text)) !== null) {
+      let val = match[1];
+      if (val.startsWith('"') && val.endsWith('"')) {
+        val = val.substring(1, val.length - 1).replace(/""/g, '"');
+      }
+      matches.push(val.trim());
+    }
+    return matches;
+  }
+
   async function chargerDonnees() {
     try {
       const response = await fetch(SHEET_CSV_URL);
       const data = await response.text();
-      const rows = data.split('\n').map(r => r.split(','));
+      const lines = data.split(/\r?\n/).filter(line => line.trim() !== '');
       
-      // Assumer : Col 0 = ID, Col 1 = Titre, Col 2 = Categorie, Col 3 = Debut, Col 4 = Fin, Col 5 = Lieu
-      seances = rows.slice(1).filter(r => r.length >= 6).map(r => ({
-        id: r[0].trim(),
-        titre: r[1].trim().replace(/^"|"$/g, ''),
-        cat: r[2].trim(),
-        debut: r[3].trim(),
-        fin: r[4].trim(),
-        lieu: r[5].trim().replace(/^"|"$/g, '')
-      }));
+      if (lines.length === 0) return;
+
+      const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase());
+
+      // Identification dynamique des colonnes par leurs noms
+      const idxId = headers.findIndex(h => h.includes('id'));
+      const idxTitre = headers.findIndex(h => h.includes('titre') || h.includes('film'));
+      const idxDebut = headers.findIndex(h => h.includes('debut') || h.includes('début'));
+      const idxFin = headers.findIndex(h => h.includes('fin'));
+      const idxLieu = headers.findIndex(h => h.includes('lieu'));
+
+      seances = lines.slice(1).map((line, i) => {
+        const row = parseCSVLine(line);
+        return {
+          id: (idxId !== -1 && row[idxId]) ? row[idxId] : `seance-${i}`,
+          titre: idxTitre !== -1 ? row[idxTitre] : row[1],
+          debut: idxDebut !== -1 ? row[idxDebut] : row[3],
+          fin: idxFin !== -1 ? row[idxFin] : row[4],
+          lieu: idxLieu !== -1 ? row[idxLieu] : row[5]
+        };
+      }).filter(s => s.titre && s.lieu);
 
       remplirFiltreLieux();
       afficher(seances);
     } catch (e) {
-      document.getElementById('list').innerHTML = "Erreur de chargement des données. Vérifiez l'URL de publication.";
+      document.getElementById('list').innerHTML = "Erreur de chargement des données. Vérifiez la publication CSV.";
     }
   }
 
   function remplirFiltreLieux() {
-    const lieux = [...new Set(seances.map(s => s.lieu))].sort();
+    const lieux = [...new Set(seances.map(s => s.lieu))].filter(Boolean).sort();
     const select = document.getElementById('filter-lieu');
+    select.innerHTML = '<option value="">📍 Tous les lieux</option>';
     lieux.forEach(l => {
-      if(l) select.innerHTML += `<option value="${l}">${l}</option>`;
+      select.innerHTML += `<option value="${l}">${l}</option>`;
     });
   }
 
   function afficher(liste) {
     const container = document.getElementById('list');
-    if(liste.length === 0) {
-      container.innerHTML = "<p>Aucune séance trouvée.</p>";
+    if (liste.length === 0) {
+      container.innerHTML = "<p style='text-align:center; color:#888;'>Aucune séance ne correspond à votre recherche.</p>";
       return;
     }
     container.innerHTML = liste.map(s => `
       <div class="seance-card">
         <div class="seance-info">
           <h3>${s.titre}</h3>
-          <p>📅 ${s.debut} ➔ ${s.fin}</p>
+          <p>📅 ${s.debut} ${s.fin ? '➔ ' + s.fin : ''}</p>
           <p>📍 ${s.lieu}</p>
         </div>
-        <input type="checkbox" ${selection.has(s.id) ? 'checked' : ''} onchange="toggle('${s.id}')" style="transform: scale(1.5);">
+        <input type="checkbox" ${selection.has(s.id) ? 'checked' : ''} onchange="toggle('${s.id}')" style="transform: scale(1.5); cursor:pointer;">
       </div>
     `).join('');
   }
@@ -104,33 +135,45 @@
   function filtrer() {
     const search = document.getElementById('search').value.toLowerCase();
     const lieu = document.getElementById('filter-lieu').value;
-    const res = seances.filter(s => 
-      s.titre.toLowerCase().includes(search) &&
-      (lieu === "" || s.lieu === lieu)
-    );
+    const uniquementSelection = document.getElementById('filter-selection').checked;
+
+    const res = seances.filter(s => {
+      const matchSearch = s.titre.toLowerCase().includes(search);
+      const matchLieu = (lieu === "" || s.lieu === lieu);
+      const matchSelection = !uniquementSelection || selection.has(s.id);
+      return matchSearch && matchLieu && matchSelection;
+    });
+
     afficher(res);
   }
 
   function toggle(id) {
-    if(selection.has(id)) selection.delete(id);
+    if (selection.has(id)) selection.delete(id);
     else selection.add(id);
+    
     document.getElementById('count').innerText = selection.size;
     document.getElementById('btn-export').disabled = selection.size === 0;
+
+    if (document.getElementById('filter-selection').checked) {
+      filtrer();
+    }
   }
 
-  // 2. Générer le fichier .ics
   function genererICS() {
     let ics = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Festival Lumiere//FR\nX-WR-CALNAME:Mon Festival Lumiere 2026\n";
 
     seances.filter(s => selection.has(s.id)).forEach(s => {
-      // Formatage des dates pour l'ICS : YYYYMMDDTHHMMSS
-      const formatICSDate = (str) => str.replace(/[- :]/g, '').slice(0, 15) + '00Z';
-      
+      const formatICSDate = (str) => {
+        if (!str) return '';
+        const clean = str.replace(/[- :]/g, '');
+        return clean.length >= 12 ? clean.slice(0, 12) + '00Z' : clean;
+      };
+
       ics += `BEGIN:VEVENT\n`;
       ics += `SUMMARY:${s.titre}\n`;
       ics += `LOCATION:${s.lieu}\n`;
-      ics += `DTSTART:${formatICSDate(s.debut)}\n`;
-      ics += `DTEND:${formatICSDate(s.fin)}\n`;
+      if (s.debut) ics += `DTSTART:${formatICSDate(s.debut)}\n`;
+      if (s.fin) ics += `DTEND:${formatICSDate(s.fin)}\n`;
       ics += `END:VEVENT\n`;
     });
 
