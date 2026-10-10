@@ -6,7 +6,7 @@
   <title>Festival Lumière 2026 — Mon Programme Sur Mesure</title>
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f8f9fa; color: #333; margin: 0; padding: 20px; }
-    .container { max-width: 800px; margin: 0 auto; }
+    .container { max-width: 1800px; margin: 0 auto; }
     h1 { color: #e50914; text-align: center; }
     .filters { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; align-items: center; }
     input, select { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; width: 100%; box-sizing: border-box; }
@@ -17,6 +17,19 @@
     .sticky-bar { position: sticky; bottom: 20px; background: #fff; padding: 15px 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; }
     .btn { background: #e50914; color: #fff; border: none; padding: 12px 24px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; }
     .btn:disabled { background: #ccc; cursor: not-allowed; }
+
+    /* Style pour le menu déroulant cliquable */
+    .dropdown-filter {position: relative;user-select: none;  }
+    .dropdown-btn {padding: 10px;border: 1px solid #ccc;border-radius: 6px;font-size: 16px;width: 100%;background: #fff;cursor: pointer;text-align: left;box-sizing: border-box;display: flex;justify-content: space-between;align-items: center;}
+    .dropdown-content { display: none; position: absolute; top: 105%; left: 0; right: 0; background: #fff; border: 1px solid #ccc; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-height: 500px; overflow-y: auto; padding: 10px; z-index: 100;}
+    .dropdown-content.show {display: block; }
+
+    .info-box { background: #fff; border-left: 4px solid #6c757d; padding: 12px 16px; border-radius: 6px; font-size: 13px; color: #555; line-height: 1.5; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);}
+
+    /* Style pour aligner parfaitement la case à cocher à gauche et le texte à droite */
+    .dropdown-content label {display: flex !important;align-items: center;gap: 8px; /* Espace propre entre la case et le texte du film/lieu */font-size: 16px;margin-bottom: 6px;cursor: pointer;text-align: left;}
+    .dropdown-content input[type="checkbox"] { width: auto; margin: 0; cursor: pointer; }
+
   </style>
 </head>
 <body>
@@ -25,15 +38,72 @@
   <h1>🎬 Festival Lumière 2026</h1>
   <p style="text-align:center;">Cochez les séances de votre choix et téléchargez votre agenda sur mesure.</p>
 
+  <div class="info-box">
+    Tous les films sont présentés en version originale sous-titrée en français (VOSTF). Certains films francophones notés <strong>VFSTA</strong> sont sous-titrés en anglais. Les séances signalées par la mention <strong>ST-SME</strong> sont en version sous-titrée pour les spectateurs sourds et/ou malentendants, les interventions de celles signalées par la mention <strong>LSF</strong> sont traduites en langue des signes, celles signalées par la mention <strong>AD</strong> (avec précision du système utilisé) sont en audiodescription pour les spectateurs malvoyants.<br>
+    <br>
+    <strong>NB :</strong> Les heures de fin sont à titre indicatif (durée du film + 15 minutes). Cette estimation peut varier si un(e) invité(e) est présent(e) pour présenter le film.
+  </div>
+
   <!-- BARRE DE FILTRES -->
   <div class="filters">
-    <input type="text" id="search" placeholder="🔍 Rechercher un film..." oninput="filtrer()">
-    <select id="filter-lieu" onchange="filtrer()">
-      <option value="">📍 Tous les lieux</option>
-    </select>
+    <input type="text" id="search" placeholder="🔍 Rechercher une séance..." oninput="filtrer()">
+
+    <!-- FILTRE FILMS À CHOIX MULTIPLES  -->
+    <div class="dropdown-filter">
+      <button type="button" class="dropdown-btn" onclick="toggleDropdown(event)">
+        <span id="dropdown-label">🎬 Tous les films</span> ▾
+      </button>
+      <div id="films-checkboxes" class="dropdown-content">
+        <!-- Les cases à cocher s'injecteront ici -->
+      </div>
+    </div>
+
+    <!-- FILTRE CATÉGORIES À CHOIX MULTIPLES -->
+    <div class="dropdown-filter">
+      <button type="button" class="dropdown-btn" onclick="toggleDropdownCategories(event)">
+        <span id="dropdown-label-categorie">🎟️ Toutes les catégories</span> ▾
+      </button>
+      <div id="categories-checkboxes" class="dropdown-content">
+        <!-- Les cases à cocher s'injecteront ici -->
+      </div>
+    </div>
+
+    <!-- FILTRE LIEUX À CHOIX MULTIPLES -->
+    <div class="dropdown-filter">
+      <button type="button" class="dropdown-btn" onclick="toggleDropdownLieux(event)">
+        <span id="dropdown-label-lieu">📍 Tous les lieux</span> ▾
+      </button>
+      <div id="lieux-checkboxes" class="dropdown-content">
+        <!-- Les cases à cocher s'injecteront ici -->
+      </div>
+    </div>
+
+    <!-- FILTRE LANGUES À CHOIX MULTIPLES -->
+    <div class="dropdown-filter">
+      <button type="button" class="dropdown-btn" onclick="toggleDropdownLangues(event)">
+        <span id="dropdown-label-langue">🗣️ Toutes les langues</span> ▾
+      </button>
+      <div id="langues-checkboxes" class="dropdown-content">
+        <!-- Les cases à cocher s'injecteront ici -->
+      </div>
+    </div>
+
+    <!-- BOUTON FILTRE "MA SÉLECTION" -->
+    <button type="button" id="btn-filtre-selection" onclick="basculerFiltreSelection()" style="padding: 8px 14px; background: #e50914; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px;">
+      Ma sélection (<span id="compteur-selection">0</span>)
+    </button>
+
     <label class="checkbox-filter">
       <input type="checkbox" id="filter-selection" onchange="filtrer()" style="width: auto;">
-      ⭐ Masquer non-sélectionnés
+      Masquer non-sélectionnés
+    </label>
+  </div>
+
+  <!-- AJOUTÉ : Case "Tout sélectionner / désélectionner" -->
+  <div style="margin-bottom: 15px; padding: 0 5px;">
+    <label style="cursor: pointer; font-weight: bold; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">
+      <input type="checkbox" id="select-all-filtered" onchange="toggleToutSelectionner(this)" style="width: auto; margin: 0;">
+      Sélectionner/Désélectionner toutes les séances affichées
     </label>
   </div>
 
@@ -43,17 +113,37 @@
   <br><br>
 
   <!-- BARRE D'EXPORT STICKY -->
-  <div class="sticky-bar">
+  <!-- <div class="sticky-bar">
     <span><strong id="count">0</strong> séance(s) sélectionnée(s)</span>
     <button id="btn-export" class="btn" onclick="genererICS()" disabled>Télécharger mon .ICS</button>
+  </div> -->
+
+<!-- BARRE D'EXPORT STICKY -->
+  <div class="sticky-bar" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+    
+    <!-- Infos de sélection -->
+    <span><strong id="count">0</strong> séance(s) sélectionnée(s)</span>
+
+    <!-- Avertissement discret intégré -->
+    <div style="font-size: 13px; color: #666; max-width: 800px; line-height: 1.3;">
+      <!-- ⚠️ Note importante: Cet outil est une aide à l'organisation. Pensez à vérifier les horaires sur le <a href="https://www.festival-lumiere.org" target="_blank" style="color: #333; text-decoration: underline;">site officiel</a> en cas de modification. -->
+      ⚠️ <strong>Note importante :</strong> Cet outil est une aide à l'organisation. Les cinémas et le festival peuvent parfois ajuster les horaires des séances. Vérifiez toujours vos séances sur le <a href="https://www.festival-lumiere.org" target="_blank" style="color: #333; text-decoration: underline;">site officiel</a> du festival avant de vous y rendre.
+    </div>
+
+    <!-- Bouton de téléchargement -->
+    <button id="btn-export" class="btn" onclick="genererICS()" disabled>Télécharger mon .ICS</button>
   </div>
+
 </div>
+
+
 
 <script>
   const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVdaa2KecQUjQiiFpHUJs-zylt95WNg7MfLuYzt9PMp2Z8xmeXe0d8aiGD9QAV7CSHwTwVzJxz5z0y/pub?output=csv';
 
   let seances = [];
   let selection = new Set();
+  let modeSelectionActif = false;
 
   // Découpage propre du CSV en tenant compte des guillemets
   function parseCSVLine(text) {
@@ -86,6 +176,8 @@
       const idxDebut = headers.findIndex(h => h.includes('debut') || h.includes('début'));
       const idxFin = headers.findIndex(h => h.includes('fin'));
       const idxLieu = headers.findIndex(h => h.includes('lieu'));
+      const idxLangue = headers.findIndex(h => h.includes('langue') || h.includes('vost'));
+      const idxCategorie = headers.findIndex(h => h.includes('categorie') || h.includes('catégorie'));
 
       seances = lines.slice(1).map((line, i) => {
         const row = parseCSVLine(line);
@@ -94,25 +186,200 @@
           titre: idxTitre !== -1 ? row[idxTitre] : row[1],
           debut: idxDebut !== -1 ? row[idxDebut] : row[3],
           fin: idxFin !== -1 ? row[idxFin] : row[4],
-          lieu: idxLieu !== -1 ? row[idxLieu] : row[5]
+          lieu: idxLieu !== -1 ? row[idxLieu] : row[5],
+          langue: idxLangue !== -1 ? row[idxLangue] : '', // Récupération de la langue
+          categorie: idxCategorie !== -1 ? row[idxCategorie] : '' // Récupération de la catégorie
         };
       }).filter(s => s.titre && s.lieu);
 
       remplirFiltreLieux();
+      remplirFiltreFilms();
+      remplirFiltreLangues();
+      remplirFiltreCategories();
+
       afficher(seances);
     } catch (e) {
       document.getElementById('list').innerHTML = "Erreur de chargement des données. Vérifiez la publication CSV.";
     }
   }
 
-  function remplirFiltreLieux() {
-    const lieux = [...new Set(seances.map(s => s.lieu))].filter(Boolean).sort();
-    const select = document.getElementById('filter-lieu');
-    select.innerHTML = '<option value="">📍 Tous les lieux</option>';
-    lieux.forEach(l => {
-      select.innerHTML += `<option value="${l}">${l}</option>`;
+
+  function remplirFiltreFilms() {
+    const filmsUniques = [...new Set(seances.map(s => s.titre))]
+      .filter(titre => titre && titre.trim() !== '')
+      .sort((a, b) => a.localeCompare(b, 'fr'));
+    const container = document.getElementById('films-checkboxes');
+    container.innerHTML = '';
+    filmsUniques.forEach(film => {
+      container.innerHTML += `
+        <label>
+          <input type="checkbox" class="film-checkbox" value="${film}" onchange="mettreAJourLabelFilms(); filtrer();" style="width: auto; margin-right: 6px;">
+          ${film}
+        </label>
+      `;
     });
   }
+
+  // Met à jour le texte affiché sur le bouton principal
+  function mettreAJourLabelFilms() {
+    const coches = document.querySelectorAll('.film-checkbox:checked');
+    const label = document.getElementById('dropdown-label');
+    if (coches.length === 0) {
+      label.innerText = "🎬 Tous les films";
+    } else if (coches.length === 1) {
+      label.innerText = `🎬 ${coches[0].value}`;
+    } else {
+      label.innerText = `🎬 ${coches.length} films sélectionnés`;
+    }
+  }
+
+
+  function remplirFiltreCategories() {
+    const categoriesUniques = [...new Set(seances.map(s => s.categorie))]
+      .filter(cat => cat && cat.trim() !== '')
+      .sort((a, b) => a.localeCompare(b, 'fr'));
+    const container = document.getElementById('categories-checkboxes');
+    container.innerHTML = '';
+    categoriesUniques.forEach(cat => {
+      container.innerHTML += `
+        <label>
+          <input type="checkbox" class="categorie-checkbox" value="${cat}" onchange="mettreAJourLabelCategories(); filtrer();">
+          ${cat}
+        </label>
+      `;
+    });
+  }
+
+  function mettreAJourLabelCategories() {
+    const coches = document.querySelectorAll('.categorie-checkbox:checked');
+    const label = document.getElementById('dropdown-label-categorie');
+    if (coches.length === 0) {
+      label.innerText = "🎟️ Toutes les catégories";
+    } else if (coches.length === 1) {
+      label.innerText = `🎟️ ${coches[0].value}`;
+    } else {
+      label.innerText = `🎟️ ${coches.length} catégories sélectionnées`;
+    }
+  }
+
+
+  function remplirFiltreLieux() {
+    const lieuxUniques = [...new Set(seances.map(s => s.lieu))]
+      .filter(lieu => lieu && lieu.trim() !== '')
+      .sort((a, b) => a.localeCompare(b, 'fr'));
+    const container = document.getElementById('lieux-checkboxes');
+    container.innerHTML = '';
+    lieuxUniques.forEach(lieu => {
+      container.innerHTML += `
+        <label>
+          <input type="checkbox" class="lieu-checkbox" value="${lieu}" onchange="mettreAJourLabelLieux(); filtrer();" style="width: auto; margin-right: 6px;">
+          ${lieu}
+        </label>
+      `;
+    });
+  }
+
+  function mettreAJourLabelLieux() {
+    const coches = document.querySelectorAll('.lieu-checkbox:checked');
+    const label = document.getElementById('dropdown-label-lieu');
+    if (coches.length === 0) {
+      label.innerText = "📍 Tous les lieux";
+    } else if (coches.length === 1) {
+      label.innerText = `📍 ${coches[0].value}`;
+    } else {
+      label.innerText = `📍 ${coches.length} lieux sélectionnés`;
+    }
+  }
+
+
+  function remplirFiltreLangues() {
+    const languesUniques = [...new Set(seances.map(s => s.langue))]
+      .filter(langue => langue && langue.trim() !== '')
+      .sort((a, b) => a.localeCompare(b, 'fr'));
+    const container = document.getElementById('langues-checkboxes');
+    container.innerHTML = '';
+    languesUniques.forEach(langue => {
+      container.innerHTML += `
+        <label>
+          <input type="checkbox" class="langue-checkbox" value="${langue}" onchange="mettreAJourLabelLangues(); filtrer();" style="width: auto; margin-right: 6px;">
+          ${langue}
+        </label>
+      `;
+    });
+  }
+
+  function mettreAJourLabelLangues() {
+    const coches = document.querySelectorAll('.langue-checkbox:checked');
+    const label = document.getElementById('dropdown-label-langue');
+    if (coches.length === 0) {
+      label.innerText = "🗣️ Toutes les langues";
+    } else if (coches.length === 1) {
+      label.innerText = `🗣️ ${coches[0].value}`;
+    } else {
+      label.innerText = `🗣️ ${coches.length} langues sélectionnées`;
+    }
+  }
+
+
+  function toggleDropdown(event) {
+    event.stopPropagation();
+    document.getElementById('lieux-checkboxes').classList.remove('show');
+    document.getElementById('langues-checkboxes').classList.remove('show');
+    document.getElementById('categories-checkboxes').classList.remove('show');
+    document.getElementById('films-checkboxes').classList.toggle('show');
+  }
+
+  function toggleDropdownLieux(event) {
+    event.stopPropagation();
+    document.getElementById('films-checkboxes').classList.remove('show');
+    document.getElementById('langues-checkboxes').classList.remove('show');
+    document.getElementById('categories-checkboxes').classList.remove('show');
+    document.getElementById('lieux-checkboxes').classList.toggle('show');
+  }
+
+  function toggleDropdownLangues(event) {
+    event.stopPropagation();
+    document.getElementById('films-checkboxes').classList.remove('show');
+    document.getElementById('lieux-checkboxes').classList.remove('show');
+    document.getElementById('categories-checkboxes').classList.remove('show');
+    document.getElementById('langues-checkboxes').classList.toggle('show');
+  }
+
+  function toggleDropdownCategories(event) {
+    event.stopPropagation();
+    document.getElementById('films-checkboxes').classList.remove('show');
+    document.getElementById('lieux-checkboxes').classList.remove('show');
+    document.getElementById('langues-checkboxes').classList.remove('show');
+    document.getElementById('categories-checkboxes').classList.toggle('show');
+  }
+
+  // Fermer les menus si on clique en dehors (à adapter ou fusionner avec l'existant)
+  window.onclick = function(event) {
+    if (!event.target.closest('.dropdown-filter')) {
+      document.getElementById('films-checkboxes').classList.remove('show');
+      document.getElementById('langues-checkboxes').classList.remove('show');
+      document.getElementById('lieux-checkboxes').classList.remove('show');
+      document.getElementById('categories-checkboxes').classList.remove('show');
+    }
+  }
+
+  // Permet de cocher ou décocher toutes les séances actuellement visibles/filtrées
+  function toggleToutSelectionner(masterCheckbox) {
+    // 1. Détermine si on doit tout cocher ou tout décocher
+    const estCoche = masterCheckbox.checked;
+    // 2. On parcourt le tableau des séances actuellement filtrées/affichées (variable 'res' globale ou locale de votre filtre)
+    // Si 'res' n'est pas globale, on peut utiliser directement les éléments du DOM :
+    const checkboxesIndividuelles = document.querySelectorAll('.seance-card input[type="checkbox"]');
+
+    checkboxesIndividuelles.forEach(checkbox => {
+      if (checkbox.checked !== estCoche) {
+        checkbox.checked = estCoche;
+        // Déclenche l'événement 'change' pour que votre code existant enregistre la sélection (ex: dans un Set)
+        checkbox.dispatchEvent(new Event('change'));
+      }
+    });
+  }
+
 
   function afficher(liste) {
     const container = document.getElementById('list');
@@ -134,39 +401,93 @@
 
   function filtrer() {
     const search = document.getElementById('search').value.toLowerCase();
-    const lieu = document.getElementById('filter-lieu').value;
+    // Récupérer tous les films cochés dans la liste
+    const lieuxCoches = Array.from(document.querySelectorAll('.lieu-checkbox:checked')).map(cb => cb.value);
+    const filmsCoches = Array.from(document.querySelectorAll('.film-checkbox:checked')).map(cb => cb.value);
+    const languesCoches = Array.from(document.querySelectorAll('.langue-checkbox:checked')).map(cb => cb.value); // Récupération des langues cochées
+    const categoriesCoches = Array.from(document.querySelectorAll('.categorie-checkbox:checked')).map(cb => cb.value); // Récupération des catégories cochées
     const uniquementSelection = document.getElementById('filter-selection').checked;
-
+    
     const res = seances.filter(s => {
       const matchSearch = s.titre.toLowerCase().includes(search);
-      const matchLieu = (lieu === "" || s.lieu === lieu);
-      const matchSelection = !uniquementSelection || selection.has(s.id);
-      return matchSearch && matchLieu && matchSelection;
+      // Si aucun film n'est coché, on les affiche tous. Sinon, le film de la séance doit être dans les cochés.
+      const matchLieu = (lieuxCoches.length === 0 || lieuxCoches.includes(s.lieu));
+      const matchFilm = (filmsCoches.length === 0 || filmsCoches.includes(s.titre));
+      const matchLangue = (languesCoches.length === 0 || languesCoches.includes(s.langue)); // Condition langue
+      const matchCategorie = (categoriesCoches.length === 0 || categoriesCoches.includes(s.categorie)); // Condition catégorie
+      // const matchSelection = !modeSelectionActif || selection.has(s.id);
+      const matchSelection = (!uniquementSelection && !modeSelectionActif) || selection.has(s.id);
+
+      return matchSearch && matchLieu && matchFilm && matchLangue && matchCategorie && matchSelection;
     });
 
     afficher(res);
   }
 
-  function toggle(id) {
-    if (selection.has(id)) selection.delete(id);
-    else selection.add(id);
-    
-    document.getElementById('count').innerText = selection.size;
-    document.getElementById('btn-export').disabled = selection.size === 0;
-
-    if (document.getElementById('filter-selection').checked) {
-      filtrer();
+  function mettreAJourCompteurSelection() {
+    const compteurEl = document.getElementById('compteur-selection');
+    if (compteurEl) {
+      compteurEl.innerText = selection.size;
+    }
+    const btn = document.getElementById('btn-filtre-selection');
+    if (btn && !modeSelectionActif) {
+      btn.innerText = `Ma sélection (${selection.size})`;
+    } else if (btn && modeSelectionActif) {
+      btn.innerText = `Voir tout (Sélection: ${selection.size})`;
     }
   }
 
-  function genererICS() {
+  function basculerFiltreSelection() {
+    modeSelectionActif = !modeSelectionActif;
+    const btn = document.getElementById('btn-filtre-selection');
+    if (modeSelectionActif) {
+      btn.style.background = "#28a745"; // Passe en vert pour indiquer qu'il est actif
+      btn.innerText = `Voir tout (Sélection: ${selection.size})`;
+    } else {
+      btn.style.background = "#e50914"; // Repasse en rouge d'origine
+      btn.innerText = `Ma sélection (${selection.size})`;
+    }
+    filtrer(); // Relance le filtrage avec cette nouvelle condition
+  }
+
+
+  function toggle(id) {
+    if (selection.has(id)) selection.delete(id);
+    else selection.add(id);
+    document.getElementById('count').innerText = selection.size;
+    document.getElementById('btn-export').disabled = selection.size === 0;
+    if (document.getElementById('filter-selection').checked) {
+      filtrer();
+    }
+    mettreAJourCompteurSelection();
+  }
+
+
+function genererICS() {
     let ics = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Festival Lumiere//FR\nX-WR-CALNAME:Mon Festival Lumiere 2026\n";
 
     seances.filter(s => selection.has(s.id)).forEach(s => {
       const formatICSDate = (str) => {
         if (!str) return '';
-        const clean = str.replace(/[- :]/g, '');
-        return clean.length >= 12 ? clean.slice(0, 12) + '00Z' : clean;
+        // Nettoie tous les caractères non numériques (gardant uniquement les chiffres)
+        const clean = str.replace(/\D/g, '');
+        // Si la chaîne contient bien au moins l'année, mois, jour, heure, minute (ex: 101020261700 ou 202610101700)
+        // On s'assure d'obtenir le format strict AAMMJJTHHMMSS ou AAAAMMJJTHHMMSS sans le 'Z'
+        if (clean.length >= 12) {
+          // Si le format d'origine est JJMMAAAA... ou AAAAMMJJ..., adaptez selon vos données brutes.
+          // En reprenant votre format "10/10/2026 17:00" -> chiffres : "101020261700" (Jour-Mois-Année-Heure-Minute)
+          if (clean.length === 12 || clean.length === 14) {
+            // Si c'est JJMMAAAA(JJ)HHMM
+            const jour = clean.slice(0, 2);
+            const mois = clean.slice(2, 4);
+            const annee = clean.slice(4, 8);
+            const heure = clean.slice(8, 10);
+            const minute = clean.slice(10, 12);
+            return `${annee}${mois}${jour}T${heure}${minute}00`;
+          }
+        }
+        // Fallback de secours si le format est déjà proche
+        return clean.slice(0, 12);
       };
 
       ics += `BEGIN:VEVENT\n`;
