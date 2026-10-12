@@ -255,7 +255,7 @@ function afficher(liste) {
   container.innerHTML = liste.map(s => `
     <div class="seance-card">
       <div class="seance-info">
-        <h3>${s.titre}</h3>
+        <h3>${s.titre} ${s.categorie ? `[${s.categorie}]` : ''}</h3>
         <p>📅 ${s.debut} ${s.fin ? '➔ ' + s.fin : ''}</p>
         <p>📍 ${s.lieu}</p>
       </div>
