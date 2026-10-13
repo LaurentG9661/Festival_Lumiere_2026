@@ -19,8 +19,14 @@ Une application web interactive conçue pour planifier son festival de cinéma, 
 ## 💡 Astuce d'utilisation (Importation propre)
 
 Une fois votre fichier `.ICS` téléchargé depuis l'application :
-1. **Créez un agenda dédié** dans Google Agenda (ou votre application de calendrier préférée) nommé par exemple *"Festival Lumière 2026"*. Cela vous évitera de polluer ou surcharger votre agenda personnel avec toutes les séances du festival.
-2. **Importez le fichier `.ics`** directement dans ce nouvel agenda. Vous pourrez ainsi l'afficher ou le masquer en un clic selon vos besoins !
+1. **Créez un agenda dédié** dans Google Agenda (ou votre application de calendrier préférée) nommé par exemple *"Mon Festival Lumière 2026"*. Cela vous évitera de polluer ou surcharger votre agenda personnel avec toutes les séances du festival.
+Important: Vous ne pouvez créer des agendas qu'à partir d'un navigateur (donc depuis un ordinateur ou en ouvrant google agenda en version web depuis votre smartphone).
+Une fois l'agenda créé, il est visible à la fois dans un navigateur et dans l'application du smartphone.
+- Ouvrez donc [Google Agenda](https://calendar.google.com/calendar/u/0/r/settings/createcalendar) (sur ordinateur ou version web sur smartphone) en vous connectant à votre compte et créez un agenda.
+- Attribuez un nom à votre agenda.
+- Cliquez sur Créer l'agenda.
+2. **Importez le fichier `.ics`** directement dans ce nouvel agenda. Depuis un smartphone, il suffit de cliquer sur le fichier .ICS alors télécharger et de l'ouvrir dans votre application, puis de le lier à l'agenda que vous venez de créer.
+Vous pourrez ainsi l'afficher ou le masquer en un clic selon vos besoins !
 
 ---
 
