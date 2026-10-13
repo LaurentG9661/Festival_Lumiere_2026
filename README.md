@@ -2,7 +2,7 @@
 
 Une application web interactive conçue pour planifier son festival de cinéma, filtrer les séances à la volée et générer un agenda personnalisé au format iCal (`.ics`).
 
-🔗 **Démo en ligne :** [Accéder au site](https://votre-compte.github.io/votre-nom-de-repo)
+🔗 **Démo en ligne :** [Accéder au site](https://laurentg9661.github.io/Festival_Lumiere_2026/)
 
 ---
 
