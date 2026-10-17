@@ -259,7 +259,9 @@ function afficher(liste) {
         <p>📅 ${s.debut} ${s.fin ? '➔ ' + s.fin : ''}</p>
         <p>📍 ${s.lieu}</p>
       </div>
-      <input type="checkbox" ${selection.has(s.id) ? 'checked' : ''} onchange="toggle('${s.id}')" style="transform: scale(1.5); cursor:pointer;">
+      <div class="seance-action">
+        <input type="checkbox" class="seance-checkbox" ${selection.has(s.id) ? 'checked' : ''} onchange="toggle('${s.id}')">
+      </div>
     </div>
   `).join('');
 }
