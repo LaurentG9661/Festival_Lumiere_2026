@@ -7,16 +7,6 @@ Une application web interactive conçue pour planifier son festival de cinéma, 
 
 ---
 
-## ✨ Fonctionnalités principales
-
-- **Synchronisation dynamique :** Chargement et parsing en temps réel d'un flux de données CSV (issu de Google Sheets) avec gestion des en-têtes et des caractères spéciaux.
-- **Filtres croisés avancés :** Recherche textuelle instantanée et menus déroulants dynamiques à cases à cocher (par films, catégories, lieux et langues/VOST).
-- **Gestion de la sélection :** Sélection personnalisée de séances avec compteur en temps réel, mode "Ma sélection" pour n'afficher que ses coups de cœur, et bouton "Tout sélectionner / désélectionner".
-- **Export iCal natif (`.ics`) :** Génération instantanée d'un fichier d'agenda compatible avec tous les calendriers (Google Calendar, Apple Calendar, Outlook).
-- **Design Responsive (UI/UX) :** Interface fluide et épurée optimisée pour bureau et mobile, structurée avec CSS Flexbox.
-
----
-
 ## 💡 Astuce d'utilisation (Importation propre)
 
 Une fois votre fichier `.ICS` téléchargé depuis l'application :
@@ -26,8 +16,18 @@ Une fois l'agenda créé, il est visible à la fois dans un navigateur et dans l
 - Ouvrez donc [Google Agenda](https://calendar.google.com/calendar/u/0/r/settings/createcalendar) (sur ordinateur ou version web sur smartphone) en vous connectant à votre compte et créez un agenda.
 - Attribuez un nom à votre agenda.
 - Cliquez sur Créer l'agenda.
-2. **Importez le fichier `.ics`** directement dans ce nouvel agenda. Depuis un smartphone, il suffit de cliquer sur le fichier .ICS alors télécharger et de l'ouvrir dans votre application, puis de le lier à l'agenda que vous venez de créer.
+2. **Importez le fichier `.ics`** directement dans ce nouvel agenda. Depuis un smartphone, il suffit de cliquer sur le fichier .ICS alors téléchargé et de l'ouvrir dans votre application, puis de le lier à l'agenda que vous venez de créer.
 Vous pourrez ainsi l'afficher ou le masquer en un clic selon vos besoins !
+
+---
+
+## ✨ Fonctionnalités principales
+
+- **Synchronisation dynamique :** Chargement et parsing en temps réel d'un flux de données CSV (issu de Google Sheets) avec gestion des en-têtes et des caractères spéciaux.
+- **Filtres croisés avancés :** Recherche textuelle instantanée et menus déroulants dynamiques à cases à cocher (par films, catégories, lieux et langues/VOST).
+- **Gestion de la sélection :** Sélection personnalisée de séances avec compteur en temps réel, mode "Ma sélection" pour n'afficher que ses coups de cœur, et bouton "Tout sélectionner / désélectionner".
+- **Export iCal natif (`.ics`) :** Génération instantanée d'un fichier d'agenda compatible avec tous les calendriers (Google Calendar, Apple Calendar, Outlook).
+- **Design Responsive (UI/UX) :** Interface fluide et épurée optimisée pour bureau et mobile, structurée avec CSS Flexbox.
 
 ---
 
