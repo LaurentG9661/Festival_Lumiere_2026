@@ -42,12 +42,13 @@ input, select {
   user-select: none;
 }
 .seance-card { 
+  display: flex;
+  flex-direction: row;
   background: #fff;
   padding: 15px;
   border-radius: 8px;
   margin-bottom: 10px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-  display: flex;
   align-items: center;
   justify-content: space-between;
   border-left: 5px solid #e50914;
@@ -60,6 +61,17 @@ input, select {
   margin: 0;
   font-size: 14px;
   color: #666;
+}
+.seance-action {
+  flex: 0 0 20%;
+  max-width: 20%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.seance-checkbox {
+  transform: scale(1.5);
+  cursor: pointer;
 }
 .sticky-bar {
   position: sticky;
