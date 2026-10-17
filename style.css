@@ -42,7 +42,9 @@ input, select {
   user-select: none;
 }
 .seance-card { 
+  /* display: flexbox; */
   display: flex;
+  /* flex-wrap: wrap; */
   flex-direction: row;
   background: #fff;
   padding: 15px;
